@@ -24,7 +24,7 @@ fi
 # Conditionally add serverinfo and directoryserver if SERVER_DIRECTORY is set
 if [[ -n "$SERVER_DIRECTORY" ]]; then
   CMD+=(
-    --serverinfo "$SERVER_NAME;$SERVER_LOCATION;211"
+    --serverinfo "$SERVER_NAME;$SERVER_LOCATION"
     --directoryserver "$SERVER_DIRECTORY"
   )
 fi
