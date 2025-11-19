@@ -39,4 +39,9 @@ if [[ "$MULTITHREADING" == "1" ]]; then
   CMD+=(-T)
 fi
 
+# Conditionally add --fastupdate if enabled
+if [[ "$FASTUPDATE" == "1" ]]; then
+  CMD+=(--fastupdate)
+fi
+
 exec "${CMD[@]}"
