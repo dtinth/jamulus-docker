@@ -26,7 +26,8 @@ ENV JAMULUS_PORT=22124 \
   JAMULUS_MAX_USERS=10 \
   SERVER_NAME="Jamulus Server" \
   SERVER_LOCATION="Unknown" \
-  SERVER_WELCOME_MESSAGE="jamulus-docker"
+  SERVER_WELCOME_MESSAGE="jamulus-docker" \
+  FASTUPDATE="0"
 
 # Run Jamulus server
 # To customize: docker run -e JAMULUS_MAX_USERS=40 -e JAMULUS_SERVER_NAME="My Server" ...
