@@ -18,6 +18,7 @@ if [[ -n "$JSON_RPC_SECRET" ]]; then
   CMD+=(
     --jsonrpcport 22222
     --jsonrpcsecretfile /etc/jamulus_rpc_secret.txt
+    --jsonrpcbindip 0.0.0.0
   )
 fi
 
