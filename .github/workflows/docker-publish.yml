@@ -27,7 +27,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Load Jamulus version
-        run: echo "JAMULUS_VERSION=$(cat version.txt)" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          JAMULUS_TAG=$(cat version.txt)
+          JAMULUS_VERSION=$(gh release download "$JAMULUS_TAG" --repo jamulussoftware/jamulus --pattern "Packages" --output - \
+            | grep -A5 "Package: jamulus-headless" | grep "^Version:" | head -1 | awk '{print $2}')
+          echo "JAMULUS_TAG=$JAMULUS_TAG" >> $GITHUB_ENV
+          echo "JAMULUS_VERSION=$JAMULUS_VERSION" >> $GITHUB_ENV
 
       - name: Install cosign
         if: github.event_name != 'pull_request'
@@ -83,7 +90,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            JAMULUS_VERSION=${{ env.JAMULUS_VERSION }}
+            JAMULUS_TAG=${{ env.JAMULUS_TAG }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 

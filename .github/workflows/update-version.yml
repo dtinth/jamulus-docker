@@ -18,10 +18,11 @@ jobs:
       - name: Load current version
         run: echo "CURRENT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
 
-      - name: Load latest version from apt repo
+      - name: Load latest version from GitHub releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LATEST_VERSION=$(curl -sL "https://github.com/jamulussoftware/jamulus/releases/latest/download/Packages" \
-            | grep -A5 "Package: jamulus-headless" | grep "^Version:" | head -1 | awk '{print $2}')
+          LATEST_VERSION=$(gh release view --repo jamulussoftware/jamulus --json tagName -q '.tagName')
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Mint write token
@@ -40,5 +41,5 @@ jobs:
           git config user.email "dtinth-bot@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ steps.write-token.outputs.token }}@github.com/dtinth/jamulus-docker.git
           git add version.txt
-          git commit -m "Bump jamulus-headless to v$LATEST_VERSION"
+          git commit -m "Bump jamulus to $LATEST_VERSION"
           git push

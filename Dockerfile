@@ -1,19 +1,15 @@
 FROM debian:oldstable-slim
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
   curl \
-  sudo \
   && rm -rf /var/lib/apt/lists/*
 
-ARG JAMULUS_VERSION
+ARG JAMULUS_TAG
 
-# Download and run the official Jamulus setup script
-RUN curl https://raw.githubusercontent.com/jamulussoftware/jamulus/main/linux/setup_repo.sh > /tmp/setup_repo.sh && \
-  chmod +x /tmp/setup_repo.sh && \
-  /tmp/setup_repo.sh && \
-  apt-get update && apt-get install -y \
-  jamulus-headless${JAMULUS_VERSION:+=$JAMULUS_VERSION} \
+RUN REPO_URL="https://github.com/jamulussoftware/jamulus/releases/download/$JAMULUS_TAG" && \
+  echo "deb $REPO_URL/ ./" > /etc/apt/sources.list.d/jamulus.list && \
+  curl -sLo /etc/apt/trusted.gpg.d/jamulus.asc "$REPO_URL/key.asc" && \
+  apt-get update && apt-get install -y jamulus-headless \
   && rm -rf /var/lib/apt/lists/*
 
 # Expose the default Jamulus port (UDP)
