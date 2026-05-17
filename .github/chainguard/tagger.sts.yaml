@@ -1,4 +1,0 @@
-issuer: https://token.actions.githubusercontent.com
-subject_pattern: "repo:dtinth/jamulus-docker:ref:refs/heads/main"
-permissions:
-  contents: write

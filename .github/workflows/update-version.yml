@@ -13,7 +13,16 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      - name: Mint write token
+        id: write-token
+        uses: octo-sts/action@main
+        with:
+          scope: dtinth/jamulus-docker
+          identity: update-version
+
       - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.write-token.outputs.token }}
 
       - name: Load current version
         run: echo "CURRENT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
@@ -25,21 +34,12 @@ jobs:
           LATEST_VERSION=$(gh release view --repo jamulussoftware/jamulus --json tagName -q '.tagName')
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
-      - name: Mint write token
-        if: env.LATEST_VERSION != env.CURRENT_VERSION
-        id: write-token
-        uses: octo-sts/action@main
-        with:
-          scope: dtinth/jamulus-docker
-          identity: update-version
-
       - name: Bump version
         if: env.LATEST_VERSION != env.CURRENT_VERSION
         run: |
           echo "$LATEST_VERSION" > version.txt
           git config user.name "dtinth-bot"
           git config user.email "dtinth-bot@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ steps.write-token.outputs.token }}@github.com/dtinth/jamulus-docker.git
           git add version.txt
           git commit -m "Bump jamulus to $LATEST_VERSION"
           git push

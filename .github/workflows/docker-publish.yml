@@ -100,21 +100,12 @@ jobs:
           git config user.name "dtinth-bot"
           git config user.email "dtinth-bot@users.noreply.github.com"
 
-      - name: Mint tagger token
-        if: github.ref == 'refs/heads/main'
-        id: tagger-token
-        uses: octo-sts/action@main
-        with:
-          scope: dtinth/jamulus-docker
-          identity: tagger
-
       - name: Create version tag
         if: github.ref == 'refs/heads/main'
         env:
-          GH_TOKEN: ${{ steps.tagger-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! gh api repos/dtinth/jamulus-docker/git/ref/tags/v${{ env.JAMULUS_VERSION }} &>/dev/null; then
-            git remote set-url origin https://x-access-token:${{ steps.tagger-token.outputs.token }}@github.com/dtinth/jamulus-docker.git
             git tag -a "v${{ env.JAMULUS_VERSION }}" -m "v${{ env.JAMULUS_VERSION }}"
             git push origin "v${{ env.JAMULUS_VERSION }}"
           fi
