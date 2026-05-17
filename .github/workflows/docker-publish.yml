@@ -110,9 +110,10 @@ jobs:
 
       - name: Create version tag
         if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ steps.tagger-token.outputs.token }}
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
-          if [ "v${{ env.JAMULUS_VERSION }}" != "$LATEST_TAG" ]; then
+          if ! gh api repos/dtinth/jamulus-docker/git/ref/tags/v${{ env.JAMULUS_VERSION }} &>/dev/null; then
             git remote set-url origin https://x-access-token:${{ steps.tagger-token.outputs.token }}@github.com/dtinth/jamulus-docker.git
             git tag -a "v${{ env.JAMULUS_VERSION }}" -m "v${{ env.JAMULUS_VERSION }}"
             git push origin "v${{ env.JAMULUS_VERSION }}"
