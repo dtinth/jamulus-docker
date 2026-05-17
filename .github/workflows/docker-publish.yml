@@ -91,8 +91,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             JAMULUS_TAG=${{ env.JAMULUS_TAG }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+          cache-to: type=inline
+
+      - name: Configure git identity
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "dtinth-bot"
+          git config user.email "dtinth-bot@users.noreply.github.com"
 
       - name: Mint tagger token
         if: github.ref == 'refs/heads/main'
@@ -145,8 +151,6 @@ jobs:
       - name: Commit IMAGE_INFO.md
         if: github.event_name != 'pull_request'
         run: |
-          git config user.name "dtinth-bot"
-          git config user.email "dtinth-bot@users.noreply.github.com"
           git add IMAGE_INFO.md
           git diff --cached --quiet || git commit -m "chore: update image info"
           git push
