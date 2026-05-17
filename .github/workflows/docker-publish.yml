@@ -123,14 +123,20 @@ jobs:
         run: |
           IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}"
 
-          docker pull --platform linux/amd64 --quiet "$IMAGE_REF"
-          AMD64_ID=$(docker image inspect "$IMAGE_REF" --format='{{.ID}}')
-          DISTRO=$(docker run --rm "$AMD64_ID" sh -c 'grep PRETTY_NAME /etc/os-release | cut -d\" -f2')
-          SIZE_AMD64=$(docker image inspect "$AMD64_ID" --format='{{.Size}}' | numfmt --to=iec --suffix=B)
+          AMD64_DIGEST=$(docker buildx imagetools inspect --raw "$IMAGE_REF" \
+            | jq -r '.manifests[] | select(.platform.architecture=="amd64" and .platform.os=="linux") | .digest')
+          ARM64_DIGEST=$(docker buildx imagetools inspect --raw "$IMAGE_REF" \
+            | jq -r '.manifests[] | select(.platform.architecture=="arm64" and .platform.os=="linux") | .digest')
 
-          docker pull --platform linux/arm64 --quiet "$IMAGE_REF"
-          ARM64_ID=$(docker image inspect "$IMAGE_REF" --format='{{.ID}}')
-          SIZE_ARM64=$(docker image inspect "$ARM64_ID" --format='{{.Size}}' | numfmt --to=iec --suffix=B)
+          AMD64_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$AMD64_DIGEST"
+          ARM64_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$ARM64_DIGEST"
+
+          docker pull --quiet "$AMD64_REF"
+          DISTRO=$(docker run --rm "$AMD64_REF" sh -c 'grep PRETTY_NAME /etc/os-release | cut -d\" -f2')
+          SIZE_AMD64=$(docker image inspect "$AMD64_REF" --format='{{.Size}}' | numfmt --to=iec --suffix=B)
+
+          docker pull --quiet "$ARM64_REF"
+          SIZE_ARM64=$(docker image inspect "$ARM64_REF" --format='{{.Size}}' | numfmt --to=iec --suffix=B)
 
           docker pull --platform linux/amd64 --quiet debian:oldstable-slim
           BASE_DIGEST=$(docker image inspect debian:oldstable-slim --format='{{index .RepoDigests 0}}')
