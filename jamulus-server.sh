@@ -22,11 +22,20 @@ if [[ -n "$JSON_RPC_SECRET" ]]; then
   )
 fi
 
-# Conditionally add serverinfo and directoryserver if SERVER_DIRECTORY is set
-if [[ -n "$SERVER_DIRECTORY" ]]; then
+# Directory mode: run as a directory server
+if [[ "$DIRECTORY_MODE" == "1" ]]; then
+  CMD+=(
+    --directoryaddress localhost
+    --serverinfo "$SERVER_NAME;$SERVER_LOCATION"
+  )
+  if [[ -n "$DIRECTORY_FILE" ]]; then
+    CMD+=(--directoryfile "$DIRECTORY_FILE")
+  fi
+# Registered mode: register with an upstream directory
+elif [[ -n "$SERVER_DIRECTORY" ]]; then
   CMD+=(
     --serverinfo "$SERVER_NAME;$SERVER_LOCATION"
-    --directoryserver "$SERVER_DIRECTORY"
+    --directoryaddress "$SERVER_DIRECTORY"
   )
 fi
 

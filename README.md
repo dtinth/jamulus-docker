@@ -26,8 +26,10 @@ Configure your Jamulus server using environment variables. Each variable maps to
 | Environment Variable | Default | Jamulus CLI Flag | Description |
 |---------------------|---------|------------------|-------------|
 | `SERVER_DIRECTORY` | _(not set)_ | [`--directoryaddress`](https://jamulus.io/wiki/Running-a-Server#-e-or---directoryaddress) | Directory server address (format: `hostname:port`). When set, registers the server with the specified directory. Use built-in directories like `anygenre1.jamulus.io:22124`, `rock.jamulus.io:22424`, `jazz.jamulus.io:22324`, etc. |
-| `SERVER_NAME` | `Jamulus Server` | [`--serverinfo`](https://jamulus.io/wiki/Running-a-Server#-o-or---serverinfo) | Server name (requires `SERVER_DIRECTORY` to be set) |
-| `SERVER_LOCATION` | `Unknown` | [`--serverinfo`](https://jamulus.io/wiki/Running-a-Server#-o-or---serverinfo) | Server location (requires `SERVER_DIRECTORY` to be set) |
+| `SERVER_NAME` | `Jamulus Server` | [`--serverinfo`](https://jamulus.io/wiki/Running-a-Server#-o-or---serverinfo) | Server name (requires `SERVER_DIRECTORY` or `DIRECTORY_MODE=1`) |
+| `SERVER_LOCATION` | `Unknown` | [`--serverinfo`](https://jamulus.io/wiki/Running-a-Server#-o-or---serverinfo) | Server location in `city;country` format, e.g. `Bangkok;TH` (requires `SERVER_DIRECTORY` or `DIRECTORY_MODE=1`) |
+| `DIRECTORY_MODE` | `0` | [`--directoryaddress localhost`](https://jamulus.io/wiki/Directories) | Set to `1` to run as a directory server instead of registering with one |
+| `DIRECTORY_FILE` | _(not set)_ | [`--directoryfile`](https://jamulus.io/wiki/Directories) | Path to persist the registered server list across restarts (requires `DIRECTORY_MODE=1`). Mount a volume to this path. |
 
 ### JSON RPC API
 

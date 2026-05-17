@@ -1,0 +1,44 @@
+name: Update version
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 8 * * 0'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load current version
+        run: echo "CURRENT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
+
+      - name: Load latest version from apt repo
+        run: |
+          LATEST_VERSION=$(curl -sL "https://github.com/jamulussoftware/jamulus/releases/latest/download/Packages" \
+            | grep -A5 "Package: jamulus-headless" | grep "^Version:" | head -1 | awk '{print $2}')
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+
+      - name: Mint write token
+        if: env.LATEST_VERSION != env.CURRENT_VERSION
+        id: write-token
+        uses: octo-sts/action@main
+        with:
+          scope: dtinth/jamulus-docker
+          identity: update-version
+
+      - name: Bump version
+        if: env.LATEST_VERSION != env.CURRENT_VERSION
+        run: |
+          echo "$LATEST_VERSION" > version.txt
+          git config user.name "dtinth-bot"
+          git config user.email "dtinth-bot@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ steps.write-token.outputs.token }}@github.com/dtinth/jamulus-docker.git
+          git add version.txt
+          git commit -m "Bump jamulus-headless to v$LATEST_VERSION"
+          git push
