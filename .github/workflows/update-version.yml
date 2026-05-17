@@ -3,7 +3,7 @@ name: Update version
 on:
   workflow_dispatch:
   schedule:
-    - cron: '41 8 * * 0'
+    - cron: '41 8 * * *'
 
 permissions:
   id-token: write
