@@ -39,6 +39,11 @@ elif [[ -n "$SERVER_DIRECTORY" ]]; then
   )
 fi
 
+# Conditionally add --enableipv6 for IPv6 if enabled
+if [[ "$ENABLE_IPV6" == "1" ]]; then
+  CMD+=(--enableipv6)
+fi
+
 # Conditionally add --delaypan if enabled
 if [[ "$DELAY_PAN" == "1" ]]; then
   CMD+=(--delaypan)
