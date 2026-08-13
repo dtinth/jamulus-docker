@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Updated | 2026-08-12 17:01 UTC |
+| Updated | 2026-08-13 17:01 UTC |
 | Jamulus version | 3.12.4 |
 | Distro | Debian GNU/Linux 12 (bookworm) |
 | Base image | `debian@sha256:e9ba57a7e4657f6d31af59cb7a23ba8728db6df8feb6763c81bc1a94aa7833f1` |
