@@ -2,9 +2,9 @@
 
 | Field | Value |
 |-------|-------|
-| Updated | 2026-08-24 16:55 UTC |
+| Updated | 2026-08-25 16:57 UTC |
 | Jamulus version | 3.12.4 |
 | Distro | Debian GNU/Linux 12 (bookworm) |
-| Base image | `debian@sha256:e9ba57a7e4657f6d31af59cb7a23ba8728db6df8feb6763c81bc1a94aa7833f1` |
+| Base image | `debian@sha256:3ca2fa3bd8d620b664104495afb4ad164a324054da3f07f7094b774c895662c5` |
 | Image size (amd64, uncompressed) | 161MB |
 | Image size (arm64, uncompressed) | 184MB |
